@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>ADMIN</title>
+</head>
+
+<body style="background:black;color:white;font-family:monospace;padding:20px;">
+
+<h2>ENVIAR ANUNCIO GLOBAL</h2>
+
+<input id="mensaje" placeholder="Mensaje"><br><br>
+<input id="avatar" placeholder="Ruta avatar (/assets/avatar.png)"><br><br>
+<input id="fondo" placeholder="Ruta fondo (/assets/fondo2.jpg)"><br><br>
+
+<button onclick="enviar()">ENVIAR</button>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBP-twUwMdVbG-SKWsWCxzssROI64bzkdI",
+  authDomain: "kodegames-6df40.firebaseapp.com",
+  projectId: "kodegames-6df40",
+  storageBucket: "kodegames-6df40.firebasestorage.app",
+  messagingSenderId: "394434413800",
+  appId: "1:394434413800:web:053531e404f1396f09b55d",
+  measurementId: "G-J8R3GT190D"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function enviar(){
+  await setDoc(doc(db, "global", "anuncio"), {
+    texto: document.getElementById("mensaje").value,
+    avatar: document.getElementById("avatar").value,
+    fondo: document.getElementById("fondo").value,
+    time: Date.now()
+  });
+}
+</script>
+
+</body>
+</html>
