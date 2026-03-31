@@ -2,189 +2,84 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ADMIN PANEL</title>
 
 <style>
 @font-face{
   font-family:'Minecraft';
-  src:url('/assets/fonts/Minecraft.ttf') format('truetype');
-  font-display:swap;
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+  src:url('/assets/fonts/Minecraft.ttf');
 }
 
 body{
-  min-height:100vh;
-  background:
-    radial-gradient(circle at top, #07131f 0%, #02040a 45%, #000 100%);
-  color:#cfffff;
-  font-family:'Minecraft', monospace;
+  margin:0;
+  background:#000;
+  color:#00ffff;
+  font-family:'Minecraft';
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:20px;
-  overflow:hidden;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(255,255,255,0.03) 0px,
-      rgba(255,255,255,0.03) 2px,
-      transparent 2px,
-      transparent 4px
-    );
-  pointer-events:none;
-  opacity:.15;
+  height:100vh;
 }
 
 .panel{
-  width:100%;
-  max-width:520px;
-  background:rgba(0,0,0,.82);
-  border:3px solid #00d9ff;
-  box-shadow:
-    0 0 20px rgba(0,217,255,.35),
-    0 0 60px rgba(0,120,255,.15),
-    inset 0 0 25px rgba(0,255,255,.06);
-  padding:28px;
-  border-radius:14px;
-  position:relative;
-  z-index:2;
-}
-
-h2{
+  background:rgba(0,0,0,0.9);
+  border:2px solid #00ffff;
+  padding:30px;
+  width:350px;
   text-align:center;
-  margin-bottom:20px;
-  color:#6df7ff;
-  text-shadow:
-    0 0 8px rgba(0,255,255,.55),
-    3px 3px 0 #001821;
-  font-size:28px;
+  box-shadow:0 0 25px #00ffff;
 }
 
-label{
-  display:block;
-  margin:14px 0 8px;
-  color:#9fefff;
-  font-size:14px;
-}
-
-input, select, textarea{
+input, select{
   width:100%;
-  background:#03070d;
-  border:2px solid #0ecfff;
-  color:#fff;
-  padding:14px;
-  border-radius:10px;
-  outline:none;
-  font-family:'Minecraft', monospace;
-  font-size:13px;
-  box-shadow: inset 0 0 10px rgba(0,255,255,.05);
-}
-
-textarea{
-  min-height:110px;
-  resize:vertical;
-}
-
-.preview{
-  margin-top:18px;
-  padding:14px;
-  border:2px dashed rgba(0,217,255,.45);
-  border-radius:10px;
-  background:rgba(0,20,30,.35);
-}
-
-.preview img{
-  width:90px;
-  height:90px;
-  object-fit:cover;
-  border:2px solid #00d9ff;
-  background:#000;
-  display:block;
-  margin-bottom:10px;
-}
-
-.preview small{
-  color:#9bdde7;
-  display:block;
-  margin-top:6px;
-  word-break:break-all;
+  padding:12px;
+  margin-bottom:15px;
+  background:black;
+  border:2px solid #00ffff;
+  color:white;
+  font-family:'Minecraft';
 }
 
 button{
   width:100%;
-  margin-top:18px;
-  padding:16px;
+  padding:15px;
+  margin-top:10px;
   border:none;
-  border-radius:10px;
+  font-family:'Minecraft';
   cursor:pointer;
-  font-family:'Minecraft', monospace;
-  font-size:15px;
-  background:linear-gradient(to bottom, #27f0ff, #00bcd4);
-  color:#001018;
-  box-shadow:
-    0 0 16px rgba(0,255,255,.35),
-    0 6px 0 #006678;
-  transition:.15s;
 }
 
-button:hover{
-  transform:translateY(-2px);
+#btnEnviar{
+  background:#00ffff;
+  color:black;
 }
 
-button:active{
-  transform:translateY(4px);
-  box-shadow:
-    0 0 10px rgba(0,255,255,.25),
-    0 2px 0 #006678;
+#btnQuitar{
+  background:#ff4444;
+  color:white;
 }
 
 #estado{
-  margin-top:14px;
-  text-align:center;
-  font-size:13px;
-  min-height:20px;
-  color:#9fffd6;
+  margin-top:10px;
 }
 </style>
 </head>
+
 <body>
 
 <div class="panel">
   <h2>ANUNCIO GLOBAL</h2>
 
-  <label for="mensaje">Mensaje</label>
-  <textarea id="mensaje" placeholder="Escribe el mensaje del avatar..."></textarea>
+  <input id="mensaje" placeholder="Mensaje...">
 
-  <label for="avatar">Avatar</label>
-  <select id="avatar">
-    <option value="/assets/avatar.png">Avatar 1</option>
-  </select>
-
-  <label for="fondo">Fondo</label>
   <select id="fondo">
     <option value="/assets/fondo1.jpg">Fondo 1</option>
     <option value="/assets/fondo2.jpg">Fondo 2</option>
   </select>
 
-  <div class="preview">
-    <img id="previewAvatar" src="/assets/avatar1.png" alt="preview">
-    <div id="previewTexto">Vista previa del mensaje...</div>
-    <small id="previewFondo">/assets/fondo1.jpg</small>
-  </div>
-
   <button id="btnEnviar">ENVIAR</button>
+  <button id="btnQuitar">QUITAR ANUNCIO</button>
+
   <div id="estado"></div>
 </div>
 
@@ -196,71 +91,38 @@ const firebaseConfig = {
   apiKey: "AIzaSyBP-twUwMdVbG-SKWsWCxzssROI64bzkdI",
   authDomain: "kodegames-6df40.firebaseapp.com",
   projectId: "kodegames-6df40",
-  storageBucket: "kodegames-6df40.firebasestorage.app",
-  messagingSenderId: "394434413800",
-  appId: "1:394434413800:web:053531e404f1396f09b55d",
-  measurementId: "G-J8R3GT190D"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const mensaje = document.getElementById("mensaje");
-const avatar = document.getElementById("avatar");
 const fondo = document.getElementById("fondo");
-const btnEnviar = document.getElementById("btnEnviar");
 const estado = document.getElementById("estado");
 
-const previewAvatar = document.getElementById("previewAvatar");
-const previewTexto = document.getElementById("previewTexto");
-const previewFondo = document.getElementById("previewFondo");
-
-function actualizarPreview(){
-  previewAvatar.src = avatar.value;
-  previewTexto.textContent = mensaje.value.trim() || "Vista previa del mensaje...";
-  previewFondo.textContent = fondo.value;
-}
-
-mensaje.addEventListener("input", actualizarPreview);
-avatar.addEventListener("change", actualizarPreview);
-fondo.addEventListener("change", actualizarPreview);
-actualizarPreview();
+document.getElementById("btnEnviar").addEventListener("click", enviar);
+document.getElementById("btnQuitar").addEventListener("click", quitar);
 
 async function enviar(){
-  const texto = mensaje.value.trim();
+  await setDoc(doc(db, "global", "anuncio"), {
+    texto: mensaje.value,
+    avatar: "/assets/avatar.png",
+    fondo: fondo.value,
+    activo: true,
+    time: Date.now()
+  });
 
-  if(!texto){
-    estado.textContent = "Escribe un mensaje primero.";
-    estado.style.color = "#ff9d9d";
-    return;
-  }
-
-  btnEnviar.disabled = true;
-  estado.textContent = "Enviando...";
-  estado.style.color = "#9fffd6";
-
-  try{
-    await setDoc(doc(db, "global", "anuncio"), {
-      texto,
-      avatar: avatar.value,
-      fondo: fondo.value,
-      activo: true,
-      time: Date.now()
-    });
-
-    estado.textContent = "Anuncio enviado correctamente.";
-    mensaje.value = "";
-    actualizarPreview();
-  }catch(error){
-    console.error(error);
-    estado.textContent = "Error al enviar: " + error.message;
-    estado.style.color = "#ff9d9d";
-  }finally{
-    btnEnviar.disabled = false;
-  }
+  estado.innerText = "ANUNCIO ENVIADO ⚡";
 }
 
-btnEnviar.addEventListener("click", enviar);
+async function quitar(){
+  await setDoc(doc(db, "global", "anuncio"), {
+    activo: false,
+    time: Date.now()
+  });
+
+  estado.innerText = "ANUNCIO ELIMINADO ❌";
+}
 </script>
 
 </body>
