@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>ARCARAZ GAME</title>
+
+<style>
+@font-face{
+  font-family:'Minecraft';
+  src:url('/assets/fonts/Minecraft.ttf');
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  height:100vh;
+  overflow:hidden;
+  font-family:'Minecraft';
+  background:#000;
+}
+
+/* FONDO */
+#bg{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:url('/assets/fondo1.jpg') center/cover no-repeat;
+  z-index:-2;
+  transition:1s;
+}
+
+/* GLITCH */
+.glitch{
+  animation:glitch 0.2s infinite;
+}
+
+@keyframes glitch{
+  0%{transform:translate(2px,0);}
+  50%{transform:translate(-2px,0);}
+  100%{transform:translate(2px,0);}
+}
+
+/* AVATAR */
+#avatar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:950px;
+  display:none;
+  z-index:2;
+}
+
+/* MENSAJE */
+#mensaje{
+  position:fixed;
+  bottom:280px;
+  left:50px;
+  max-width:400px;
+  background:rgba(0,0,0,0.8);
+  padding:15px;
+  border:2px solid #0ff;
+  display:none;
+  color:white;
+  z-index:3;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="bg"></div>
+
+<img id="avatar" src="/assets/avatar.png">
+<div id="mensaje"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBP-twUwMdVbG-SKWsWCxzssROI64bzkdI",
+  authDomain: "kodegames-6df40.firebaseapp.com",
+  projectId: "kodegames-6df40",
+  storageBucket: "kodegames-6df40.firebasestorage.app",
+  messagingSenderId: "394434413800",
+  appId: "1:394434413800:web:053531e404f1396f09b55d",
+  measurementId: "G-J8R3GT190D"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const anuncioRef = doc(db, "global", "anuncio");
+
+/* ESCUCHAR ANUNCIOS GLOBAL */
+onSnapshot(anuncioRef, (docSnap)=>{
+  if(!docSnap.exists()) return;
+
+  const data = docSnap.data();
+
+  // GLITCH
+  document.body.classList.add("glitch");
+  setTimeout(()=>document.body.classList.remove("glitch"), 600);
+
+  // CAMBIAR FONDO
+  if(data.fondo){
+    document.getElementById("bg").style.background =
+      `url('${data.fondo}') center/cover`;
+  }
+
+  // AVATAR
+  const avatar = document.getElementById("avatar");
+  avatar.src = data.avatar || "/assets/avatar.png";
+  avatar.style.display = "block";
+
+  // MENSAJE
+  const box = document.getElementById("mensaje");
+  box.innerText = data.texto || "";
+  box.style.display = "block";
+});
+</script>
+
+</body>
+</html>
