@@ -2,142 +2,71 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ARCARAZ GAME</title>
 
 <style>
 @font-face{
   font-family:'Minecraft';
-  src:url('/assets/fonts/Minecraft.ttf') format('truetype');
-  font-display:swap;
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-html,body{
-  width:100%;
-  height:100%;
+  src:url('/assets/fonts/Minecraft.ttf');
 }
 
 body{
+  margin:0;
   overflow:hidden;
   background:#000;
-  font-family:'Minecraft', monospace;
+  font-family:'Minecraft';
 }
 
+/* FONDO */
 #bg{
   position:fixed;
-  inset:0;
+  width:100%;
+  height:100%;
   background:url('/assets/fondo1.jpg') center/cover no-repeat;
-  transition:1s ease;
-  z-index:0;
+  transition:1s;
 }
 
-#overlay{
-  position:fixed;
-  inset:0;
-  background:
-    linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,.45)),
-    repeating-linear-gradient(
-      to bottom,
-      rgba(255,255,255,0.025) 0px,
-      rgba(255,255,255,0.025) 2px,
-      transparent 2px,
-      transparent 4px
-    );
-  pointer-events:none;
-  z-index:1;
-}
-
+/* AVATAR PEQUEÑO */
 #avatar{
   position:fixed;
-  left:-120px;
-  bottom:-30px;
-  width:950px;
-  max-width:none;
+  bottom:20px;
+  left:20px;
+  width:220px;
   display:none;
-  z-index:3;
-  image-rendering:auto;
-  animation:avatarIn .7s ease forwards;
 }
 
-@keyframes avatarIn{
-  from{ transform:translateX(-70px); opacity:0; }
-  to{ transform:translateX(0); opacity:1; }
-}
-
+/* MENSAJE */
 #mensaje{
   position:fixed;
-  left:360px;
-  bottom:240px;
-  width:min(520px, calc(100vw - 390px));
-  min-height:110px;
-  padding:18px;
-  background:rgba(0,0,0,.72);
-  border:3px solid #00e5ff;
-  color:#fff;
+  bottom:60px;
+  left:260px;
+  max-width:400px;
+  background:rgba(0,0,0,0.8);
+  padding:15px;
+  border:2px solid #00ffff;
+  color:white;
   display:none;
-  z-index:4;
-  border-radius:14px;
-  box-shadow:
-    0 0 18px rgba(0,229,255,.25),
-    inset 0 0 18px rgba(0,255,255,.05);
-  font-size:18px;
-  line-height:1.5;
+  font-size:14px;
 }
 
+/* GLITCH */
 .glitch{
-  animation:glitch .12s linear 6;
+  animation:glitch 0.2s infinite;
 }
 
 @keyframes glitch{
-  0%{ transform:translate(2px,0); filter:hue-rotate(0deg); }
-  25%{ transform:translate(-2px,1px); }
-  50%{ transform:translate(2px,-1px); filter:hue-rotate(25deg); }
-  75%{ transform:translate(-1px,1px); }
-  100%{ transform:translate(0,0); filter:hue-rotate(0deg); }
-}
-
-@media (max-width:900px){
-  #avatar{
-    width:620px;
-    left:-120px;
-    bottom:-20px;
-  }
-
-  #mensaje{
-    left:210px;
-    bottom:220px;
-    width:calc(100vw - 230px);
-    font-size:15px;
-  }
-}
-
-@media (max-width:640px){
-  #avatar{
-    width:430px;
-    left:-80px;
-    bottom:0;
-  }
-
-  #mensaje{
-    left:20px;
-    bottom:260px;
-    width:calc(100vw - 40px);
-    font-size:13px;
-  }
+  0%{transform:translate(2px);}
+  50%{transform:translate(-2px);}
+  100%{transform:translate(2px);}
 }
 </style>
 </head>
+
 <body>
 
 <div id="bg"></div>
-<div id="overlay"></div>
-<img id="avatar" src="/assets/avatar.png" alt="avatar">
+
+<img id="avatar" src="/assets/avatar.png">
 <div id="mensaje"></div>
 
 <script type="module">
@@ -148,10 +77,6 @@ const firebaseConfig = {
   apiKey: "AIzaSyBP-twUwMdVbG-SKWsWCxzssROI64bzkdI",
   authDomain: "kodegames-6df40.firebaseapp.com",
   projectId: "kodegames-6df40",
-  storageBucket: "kodegames-6df40.firebasestorage.app",
-  messagingSenderId: "394434413800",
-  appId: "1:394434413800:web:053531e404f1396f09b55d",
-  measurementId: "G-J8R3GT190D"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -159,29 +84,37 @@ const db = getFirestore(app);
 
 const anuncioRef = doc(db, "global", "anuncio");
 
-const bg = document.getElementById("bg");
-const avatar = document.getElementById("avatar");
-const mensaje = document.getElementById("mensaje");
-
-onSnapshot(anuncioRef, (docSnap) => {
+onSnapshot(anuncioRef, (docSnap)=>{
   if(!docSnap.exists()) return;
 
   const data = docSnap.data();
 
-  document.body.classList.add("glitch");
-  setTimeout(() => document.body.classList.remove("glitch"), 700);
-
-  if(data.fondo){
-    bg.style.background = `url('${data.fondo}') center/cover no-repeat`;
+  // SI ESTÁ DESACTIVADO
+  if(data.activo === false){
+    document.getElementById("avatar").style.display = "none";
+    document.getElementById("mensaje").style.display = "none";
+    return;
   }
 
-  avatar.src = data.avatar || "/assets/avatar1.png";
+  // GLITCH
+  document.body.classList.add("glitch");
+  setTimeout(()=>document.body.classList.remove("glitch"), 400);
+
+  // FONDO
+  if(data.fondo){
+    document.getElementById("bg").style.background =
+      `url('${data.fondo}') center/cover`;
+  }
+
+  // AVATAR
+  const avatar = document.getElementById("avatar");
+  avatar.src = data.avatar;
   avatar.style.display = "block";
 
-  mensaje.textContent = data.texto || "";
-  mensaje.style.display = "block";
-}, (error) => {
-  console.error("Error leyendo Firestore:", error);
+  // MENSAJE
+  const box = document.getElementById("mensaje");
+  box.innerText = data.texto;
+  box.style.display = "block";
 });
 </script>
 
