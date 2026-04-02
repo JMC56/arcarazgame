@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>ARCARAZ GAME</title>
+
+<style>
+@font-face{
+  font-family:'Minecraft';
+  src:url('/assets/fonts/Minecraft.ttf');
+}
+
+body{
+  margin:0;
+  overflow:hidden;
+  background:#000;
+  font-family:'Minecraft';
+}
+
+/* FONDO */
+#bg{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:url('/assets/fondo1.jpg') center/cover no-repeat;
+  transition:1s;
+}
+
+/* AVATAR PEQUEÑO */
+#avatar{
+  position:fixed;
+  bottom:20px;
+  left:20px;
+  width:220px;
+  display:none;
+}
+
+/* MENSAJE */
+#mensaje{
+  position:fixed;
+  bottom:60px;
+  left:260px;
+  max-width:400px;
+  background:rgba(0,0,0,0.8);
+  padding:15px;
+  border:2px solid #00ffff;
+  color:white;
+  display:none;
+  font-size:14px;
+}
+
+/* GLITCH */
+.glitch{
+  animation:glitch 0.2s infinite;
+}
+
+@keyframes glitch{
+  0%{transform:translate(2px);}
+  50%{transform:translate(-2px);}
+  100%{transform:translate(2px);}
+}
+</style>
+</head>
+
+<body>
+
+<div id="bg"></div>
+
+<img id="avatar" src="/assets/avatar.png">
+<div id="mensaje"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBP-twUwMdVbG-SKWsWCxzssROI64bzkdI",
+  authDomain: "kodegames-6df40.firebaseapp.com",
+  projectId: "kodegames-6df40",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const anuncioRef = doc(db, "global", "anuncio");
+
+onSnapshot(anuncioRef, (docSnap)=>{
+  if(!docSnap.exists()) return;
+
+  const data = docSnap.data();
+
+  // SI ESTÁ DESACTIVADO
+  if(data.activo === false){
+    document.getElementById("avatar").style.display = "none";
+    document.getElementById("mensaje").style.display = "none";
+    return;
+  }
+
+  // GLITCH
+  document.body.classList.add("glitch");
+  setTimeout(()=>document.body.classList.remove("glitch"), 400);
+
+  // FONDO
+  if(data.fondo){
+    document.getElementById("bg").style.background =
+      `url('${data.fondo}') center/cover`;
+  }
+
+  // AVATAR
+  const avatar = document.getElementById("avatar");
+  avatar.src = data.avatar;
+  avatar.style.display = "block";
+
+  // MENSAJE
+  const box = document.getElementById("mensaje");
+  box.innerText = data.texto;
+  box.style.display = "block";
+});
+</script>
+
+</body>
+</html>
